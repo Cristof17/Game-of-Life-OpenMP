@@ -21,17 +21,13 @@ bool **bools2;
 void extend_with_margins(int L, int C, bool **begin, bool ***end){
 
 	(*end) =(bool **)malloc((L + 2) * sizeof(bool *));
-	for (int i = 0; i < L; ++i){
+	for (int i = 0; i < L + 2; ++i){
 		(*end)[i] = (bool *)malloc((C + 2) * sizeof(bool));
 	}
 	for (int i = 0; i < L; ++i){
 		(*end)[i + 1][0] = begin[i][C - 1];
 		(*end)[i + 1][C - 1 + 1] = begin[i][0];
 	}
-
-	cout << "C =" << C << "L =" << L << endl;
-	
-	/*
 
 	for (int i = 0; i < C; ++i){
 		(*end)[0][i + 1] = begin[0][i];
@@ -48,7 +44,6 @@ void extend_with_margins(int L, int C, bool **begin, bool ***end){
 			(*end)[i+1][j+1] = begin[i][j];
 		}
 	}
-	*/
 
 }
 
