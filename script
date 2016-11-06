@@ -1,0 +1,4 @@
+#!/bin/bash
+make parallel
+export OMP_NUM_THREADS=$1
+watch -n 0,2 make run_parallel

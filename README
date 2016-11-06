@@ -1,0 +1,16 @@
+ROTSCHING CRISTOFOR 343C1
+
+Implementarea temei am realizat-o în felul următor.
+-citirea argumentelor se face conform enuntului
+-deschid fișierul de intrare și îl parsez
+-transform matrice de caractere în matrice de bool
+-extind matricea de bool cu marginile din capătul opus unei linii sau coloane(enunțul temei)
+-procesez starea fiecărei căsuțe.
+
+Procesarea fiecărei căsuțe. Pentru acest lucru iterez folosind două for loops pe matricea
+extinsă de bools, și iterez prin vecini folosind 2 indici (i,j) în intervalele ((-1,1),(-1,1))
+Dacă pe o căsuță găsesc valoarea true, incrementez numărul de vecini ALIVE. În caz contrar 
+incrementez numărul de vecini DEAD.o
+
+După partea de procesare a matricei extinse de bool de N ori, extrag matricea de bool fară margini
+și apoi o scriu în fișierul de ieșire, schimbând valorile de false în "." și valorile de true în "X".

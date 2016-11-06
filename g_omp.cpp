@@ -66,15 +66,11 @@ void simulate_matrix(int L,int C,bool **start,bool **end){
 	int alive = 0;
 	int dead = 0;
 
-	int i = 0; //line index
-	int j = 0; //col index
-	int k = 0; //line offset
-	int l = 0; //col offset
-
-	for (i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
-		for (j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
-			for(k = -1; k <= 1; ++k){
-				for (l = -1; l <= 1; ++l){
+//	#pragma omp parallel for collapse(2) reduction(+:alive, dead)
+	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
+		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
+			for(int k = -1; k <= 1; ++k){
+				for (int l = -1; l <= 1; ++l){
 				//don't count the element in the center
 				if (k == 0 && l == 0)
 					continue;
@@ -134,6 +130,7 @@ void save_to_file(FILE *file, int L, int C, bool **matrix){
 }
 
 void copy_matrix(int L, int C, bool **start, bool **stop){
+	//#pragma omp parallel for
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			stop[i][j] = start[i][j];
@@ -185,6 +182,7 @@ int main(int argc, char **argv){
 		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
 		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
 	}
+	cout << "Ajung aici " << endl;
 
 	save_to_file(f_out, L + 2, C + 2, bools_normal);
 	fclose(f_in);
@@ -193,6 +191,7 @@ int main(int argc, char **argv){
 	clock_t end = clock();
 	double time_spent = (double)(end - begin)/CLOCKS_PER_SEC;
 	cout << "Executed in " << time_spent << endl;
+	cout << "Threads = " << omp_get_max_threads() << endl;
 
 	return 0;
 }
