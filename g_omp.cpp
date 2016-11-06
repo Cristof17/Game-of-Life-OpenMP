@@ -182,16 +182,18 @@ int main(int argc, char **argv){
 		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
 		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
 	}
+
 	cout << "Ajung aici " << endl;
 
 	save_to_file(f_out, L + 2, C + 2, bools_normal);
 	fclose(f_in);
 	fclose(f_out);
-
+	
+	
 	clock_t end = clock();
 	double time_spent = (double)(end - begin)/CLOCKS_PER_SEC;
 	cout << "Executed in " << time_spent << endl;
 	cout << "Threads = " << omp_get_max_threads() << endl;
-
+	
 	return 0;
 }
