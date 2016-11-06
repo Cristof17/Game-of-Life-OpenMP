@@ -1,7 +1,7 @@
 infile = input/in5.txt
 outfile_serial = out/out5.txt
 outfile_parallel = out/out5_omp.txt
-iterations = 500
+iterations = 5
 clean:
 	rm -rf g_serial g_omp
 serial: g_serial.cpp
