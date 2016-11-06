@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <omp.h>
 #include <time.h>
 using namespace std;
 
@@ -65,28 +66,17 @@ void simulate_matrix(int L,int C,bool **start,bool **end){
 	int alive = 0;
 	int dead = 0;
 
-	int i = 0; //line index
-	int j = 0; //col index
-	int k = 0; //line offset
-	int l = 0; //col offset
-
-	for (i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
-		for (j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
-			for(k = -1; k <= 1; ++k){
-				for (l = -1; l <= 1; ++l){
-				//don't count the element in the center
-				if (k == 0 && l == 0)
-					continue;
-					//count alive and dead neighbors
-					if (start[i + k][j + l] == 0)
-						dead++;
-					else
-						alive++;
-					if (alive >= 1)
-						int a = 2;
-				}
-				
-			}
+	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
+		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
+			//count alive and dead neighbors
+			(start[i -1][j + (-1)] == 0) ? dead++ : alive++;
+			(start[i -1][j + 0] == 0) ? dead++ : alive++;
+			(start[i -1][j + 1] == 0) ? dead++ : alive++;
+			(start[i + 0][j + (-1)] == 0) ? dead++ : alive++;
+			(start[i + 0][j + 1] == 0) ? dead++ : alive++;
+			(start[i + 1][j + (-1)] == 0) ? dead++ : alive++;
+			(start[i + 1][j + 0] == 0) ? dead++ : alive++;
+			(start[i + 1][j + 1] == 0) ? dead++ : alive++;
 
 			//check the values and put them in the buffered matrix
 			if (dead < 2)
@@ -133,6 +123,7 @@ void save_to_file(FILE *file, int L, int C, bool **matrix){
 }
 
 void copy_matrix(int L, int C, bool **start, bool **stop){
+
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			stop[i][j] = start[i][j];
@@ -142,7 +133,7 @@ void copy_matrix(int L, int C, bool **start, bool **stop){
 
 int main(int argc, char **argv){
 	
-	clock_t start = clock();
+	clock_t begin = clock();
 
 	if (argc <= 1){
 		cout << "./g_serial <initial_file> <number_of_iterations> <final_file>" << endl;
@@ -188,10 +179,11 @@ int main(int argc, char **argv){
 	save_to_file(f_out, L + 2, C + 2, bools_normal);
 	fclose(f_in);
 	fclose(f_out);
-
-	clock_t stop = clock();
-	double diff = (double)(stop - start)/CLOCKS_PER_SEC;
-	cout << "Executed in " << diff << endl; 
-
+	
+	
+	clock_t end = clock();
+	double time_spent = (double)(end - begin)/CLOCKS_PER_SEC;
+	cout << "Executed in " << time_spent << endl;
+	
 	return 0;
 }

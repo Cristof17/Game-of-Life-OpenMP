@@ -66,24 +66,18 @@ void simulate_matrix(int L,int C,bool **start,bool **end){
 	int alive = 0;
 	int dead = 0;
 
-	#pragma omp parallel for reduction(+:alive, dead) schedule(runtime)
+	#pragma omp parallel for collapse(2) reduction(+:alive, dead) schedule(runtime)
 	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
 		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
-			for(int k = -1; k <= 1; ++k){
-				for (int l = -1; l <= 1; ++l){
-				//don't count the element in the center
-				if (k == 0 && l == 0)
-					continue;
-					//count alive and dead neighbors
-					if (start[i + k][j + l] == 0)
-						dead++;
-					else
-						alive++;
-					if (alive >= 1)
-						int a = 2;
-				}
-				
-			}
+			//count alive and dead neighbors
+			(start[i -1][j + (-1)] == 0) ? dead++ : alive++;
+			(start[i -1][j + 0] == 0) ? dead++ : alive++;
+			(start[i -1][j + 1] == 0) ? dead++ : alive++;
+			(start[i + 0][j + (-1)] == 0) ? dead++ : alive++;
+			(start[i + 0][j + 1] == 0) ? dead++ : alive++;
+			(start[i + 1][j + (-1)] == 0) ? dead++ : alive++;
+			(start[i + 1][j + 0] == 0) ? dead++ : alive++;
+			(start[i + 1][j + 1] == 0) ? dead++ : alive++;
 
 			//check the values and put them in the buffered matrix
 			if (dead < 2)
@@ -130,7 +124,7 @@ void save_to_file(FILE *file, int L, int C, bool **matrix){
 }
 
 void copy_matrix(int L, int C, bool **start, bool **stop){
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(1) schedule(runtime)
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			stop[i][j] = start[i][j];
@@ -177,7 +171,7 @@ int main(int argc, char **argv){
 	extend_with_margins(L, C, bools, &bools_normal); 
 	//from here we will only work with bools_normal and bools_buffered
 	alloc_buffer_matrix(L + 2, C + 2, &bools_buffered);
-
+	
 	for (int i = 0; i < N; ++i){
 		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
 		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
