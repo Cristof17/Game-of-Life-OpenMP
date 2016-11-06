@@ -1,13 +1,12 @@
-#include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdio.h>
 #include <string.h>
 #include <omp.h>
 #include <time.h>
-using namespace std;
 
-#define DEAD false
-#define ALIVE true
+#define DEAD 0
+#define ALIVE 1
 
 char *fisier_in; //initial state of the problem 
 int N; //number of iterations
@@ -17,15 +16,15 @@ int L; //lines of the matrix
 int C;  //columns of the matrix
 
 char **matrix;
-bool **bools;
-bool **bools_normal;
-bool **bools_buffered;
+int **bools;
+int **bools_normal;
+int **bools_buffered;
 
-void extend_with_margins(int L, int C, bool **begin, bool ***end){
+void extend_with_margins(int L, int C, int **begin, int ***end){
 
-	(*end) =(bool **)malloc((L + 2) * sizeof(bool *));
+	(*end) =(int **)malloc((L + 2) * sizeof(int *));
 	for (int i = 0; i < L + 2; ++i){
-		(*end)[i] = (bool *)malloc((C + 2) * sizeof(bool));
+		(*end)[i] = (int *)malloc((C + 2) * sizeof(int));
 	}
 	for (int i = 0; i < L; ++i){
 		(*end)[i + 1][0] = begin[i][C - 1];
@@ -50,7 +49,7 @@ void extend_with_margins(int L, int C, bool **begin, bool ***end){
 
 }
 
-void transform_in_bool(int L, int C, char **chars, bool** bools){
+void transform_in_bool(int L, int C, char **chars, int** bools){
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			if (chars[i][j] == '.'){
@@ -62,7 +61,7 @@ void transform_in_bool(int L, int C, char **chars, bool** bools){
 	}
 }
 
-void simulate_matrix(int L,int C,bool **start,bool **end){
+void simulate_matrix(int L,int C,int **start,int **end){
 	int alive = 0;
 	int dead = 0;
 
@@ -93,26 +92,26 @@ void simulate_matrix(int L,int C,bool **start,bool **end){
 	}
 }
 
-void print(bool **mat, int L, int C){
+void print(int **mat, int L, int C){
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
-			cout << mat[i][j] << " ";
+			printf("%d ", mat[i][j]);
 		}
-	cout << endl;
+		printf("\n");
 	}
 }
 
-void alloc_buffer_matrix(int L, int C, bool ***bools){
-	(*bools) = (bool**)malloc(L * sizeof(bool *));
+void alloc_buffer_matrix(int L, int C, int ***bools){
+	(*bools) = (int**)malloc(L * sizeof(int *));
 	for (int i = 0; i < L; ++i){
-		(*bools)[i] = (bool*)malloc(C * sizeof(bool));
+		(*bools)[i] = (int*)malloc(C * sizeof(int));
 	}
 }
 
-void save_to_file(FILE *file, int L, int C, bool **matrix){
+void save_to_file(FILE *file, int L, int C, int **matrix){
 	for (int i = 1; i < L-1; ++i){
 		for (int j = 1; j < C -1; ++j){
-			if (matrix[i][j] == false)
+			if (matrix[i][j] == DEAD)
 				fprintf(file, ". ");
 			else
 				fprintf(file, "X ");
@@ -122,8 +121,7 @@ void save_to_file(FILE *file, int L, int C, bool **matrix){
 	fflush(file);
 }
 
-void copy_matrix(int L, int C, bool **start, bool **stop){
-
+void copy_matrix(int L, int C, int **start, int **stop){
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			stop[i][j] = start[i][j];
@@ -136,7 +134,7 @@ int main(int argc, char **argv){
 	clock_t begin = clock();
 
 	if (argc <= 1){
-		cout << "./g_serial <initial_file> <number_of_iterations> <final_file>" << endl;
+		printf("./g_serial <initial_file> <number_of_iterations> <final_file>");
 		return -1;
 	}
 
@@ -155,9 +153,9 @@ int main(int argc, char **argv){
 		matrix[i] = (char *)malloc(C * sizeof(char));
 	}
 
-	bools = (bool **)malloc(L * sizeof(bool*));
+	bools = (int **)malloc(L * sizeof(int *));
 	for (int i = 0; i < L; ++i){
-		bools[i] = (bool*)malloc(C * sizeof(bool));
+		bools[i] = (int *)malloc(C * sizeof(int));
 	}
 
 	for (int i = 0; i < L; ++i){
@@ -170,7 +168,7 @@ int main(int argc, char **argv){
 	extend_with_margins(L, C, bools, &bools_normal); 
 	//from here we will only work with bools_normal and bools_buffered
 	alloc_buffer_matrix(L + 2, C + 2, &bools_buffered);
-
+	
 	for (int i = 0; i < N; ++i){
 		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
 		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
@@ -183,7 +181,7 @@ int main(int argc, char **argv){
 	
 	clock_t end = clock();
 	double time_spent = (double)(end - begin)/CLOCKS_PER_SEC;
-	cout << "Executed in " << time_spent << endl;
+	printf("Executed in %lf\n", time_spent);
 	
 	return 0;
 }

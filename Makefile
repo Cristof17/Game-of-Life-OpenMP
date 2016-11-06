@@ -5,7 +5,7 @@ iterations = 100
 clean:
 	rm -rf g_serial g_omp
 serial: g_serial.cpp
-	g++ g_serial.cpp -o g_serial -g
+	gcc g_serial.cpp -o g_serial -g
 parallel: g_omp.cpp
 	gcc g_omp.cpp -o g_omp -fopenmp
 run_serial:
