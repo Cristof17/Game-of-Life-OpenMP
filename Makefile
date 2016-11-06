@@ -1,13 +1,13 @@
 infile = input/in1.txt
 outfile_serial = out/out1.txt
 outfile_parallel = out/out1_omp.txt
-iterations = 100000
+iterations = 100
 clean:
 	rm -rf g_serial g_omp
 serial: g_serial.cpp
 	g++ g_serial.cpp -o g_serial -g
 parallel: g_omp.cpp
-	g++ g_omp.cpp -o g_omp -fopenmp
+	gcc g_omp.cpp -o g_omp -fopenmp
 run_serial:
 	./g_serial $(infile) $(iterations) $(outfile_serial)
 run_parallel:
