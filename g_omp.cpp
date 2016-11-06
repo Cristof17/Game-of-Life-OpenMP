@@ -183,8 +183,6 @@ int main(int argc, char **argv){
 		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
 	}
 
-	cout << "Ajung aici " << endl;
-
 	save_to_file(f_out, L + 2, C + 2, bools_normal);
 	fclose(f_in);
 	fclose(f_out);
