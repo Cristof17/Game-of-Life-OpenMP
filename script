@@ -1,4 +1,5 @@
 #!/bin/bash
 make parallel
 export OMP_NUM_THREADS=$1
+export OMP_SCHEDULE=$2
 watch -n 0,2 make run_parallel

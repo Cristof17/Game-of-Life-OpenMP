@@ -66,7 +66,7 @@ void simulate_matrix(int L,int C,bool **start,bool **end){
 	int alive = 0;
 	int dead = 0;
 
-//	#pragma omp parallel for collapse(2) reduction(+:alive, dead)
+	#pragma omp parallel for reduction(+:alive, dead) schedule(runtime)
 	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
 		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
 			for(int k = -1; k <= 1; ++k){
@@ -130,7 +130,7 @@ void save_to_file(FILE *file, int L, int C, bool **matrix){
 }
 
 void copy_matrix(int L, int C, bool **start, bool **stop){
-	//#pragma omp parallel for
+	#pragma omp parallel for
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			stop[i][j] = start[i][j];
