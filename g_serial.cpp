@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 using namespace std;
 
 #define DEAD false
@@ -141,6 +142,8 @@ void copy_matrix(int L, int C, bool **start, bool **stop){
 
 int main(int argc, char **argv){
 	
+	clock_t start = clock();
+
 	if (argc <= 1){
 		cout << "./g_serial <initial_file> <number_of_iterations> <final_file>" << endl;
 		return -1;
@@ -185,6 +188,10 @@ int main(int argc, char **argv){
 	save_to_file(f_out, L + 2, C + 2, bools_normal);
 	fclose(f_in);
 	fclose(f_out);
+
+	clock_t stop = clock();
+	double diff = (double)(stop - start)/CLOCKS_PER_SEC;
+	cout << "Executed in " << diff << endl; 
 
 	return 0;
 }
