@@ -14,3 +14,5 @@ incrementez numărul de vecini DEAD.o
 
 După partea de procesare a matricei extinse de bool de N ori, extrag matricea de bool fară margini
 și apoi o scriu în fișierul de ieșire, schimbând valorile de false în "." și valorile de true în "X".
+
+Pentru optimizarea coduku

@@ -65,7 +65,7 @@ void simulate_matrix(int L,int C,int **start,int **end){
 	int alive = 0;
 	int dead = 0;
 
-	#pragma omp parallel for collapse(2) reduction(+:alive, dead) schedule(runtime)
+	#pragma omp parallel for reduction(+:alive, dead) schedule(runtime)
 	for (int i = 1; i < L - 1 ; i+= 2){ //start from (1,1) because we have added borders
 		for (int j = 1; j < C - 1; j += 2){ //start from (1,1) because we have added borders
 			//count alive and dead neighbors
