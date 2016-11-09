@@ -8,11 +8,14 @@ Implementarea temei am realizat-o în felul următor.
 -procesez starea fiecărei căsuțe.
 
 Procesarea fiecărei căsuțe. Pentru acest lucru iterez folosind două for loops pe matricea
-extinsă de bools, și iterez prin vecini folosind 2 indici (i,j) în intervalele ((-1,1),(-1,1))
+extinsă de bools, și iterez prin vecini folosind 2 indici (line_offset,col_offset) în intervalele 
+((-1,1),(-1,1)).
 Dacă pe o căsuță găsesc valoarea true, incrementez numărul de vecini ALIVE. În caz contrar 
 incrementez numărul de vecini DEAD.o
 
 După partea de procesare a matricei extinse de bool de N ori, extrag matricea de bool fară margini
 și apoi o scriu în fișierul de ieșire, schimbând valorile de false în "." și valorile de true în "X".
 
-Pentru optimizarea coduku
+Pentru optimizarea simulării am eliminat două for loops cu (line_offset,col_offset) în range-ul de 
+valori ((-1,1),(-1,1)). Pentru optimizare am folosit în construcția "#pragma omp parallel for" 
+construcția "collapse" 
