@@ -80,14 +80,12 @@ void simulate_matrix(int L,int C,int **start,int **end){
 			//check the values and put them in the buffered matrix
 			if (alive < 2)
 				end[i][j] = DEAD;
-			else if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
+			if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
 				end[i][j] = ALIVE;
-			else if (alive > 3)
+			if (alive > 3)
 				end[i][j] = DEAD;
-			else if (start[i][j] == DEAD && alive == 3)
+			if (start[i][j] == DEAD && alive == 3)
 				end[i][j] = ALIVE;
-			else
-				end[i][j] = start[i][j];
 			alive = 0;
 			dead = 0;
 		}
@@ -127,6 +125,14 @@ void copy_matrix(int L, int C, int **start, int **stop){
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			stop[i][j] = start[i][j];
+		}
+	}
+}
+
+void reset_matrix(int L, int C, int **matrix){
+	for (int i = 0; i < L; ++i){
+		for (int j = 0; j < C; ++j){
+			matrix[i][j] = DEAD;
 		}
 	}
 }
@@ -174,6 +180,7 @@ int main(int argc, char **argv){
 	for (int i = 0; i < N; ++i){
 		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
 		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
+		//reset_matrix(L + 2, C + 2, bools_buffered);
 	}
 
 	save_to_file(f_out, L + 2, C + 2, bools_normal);
