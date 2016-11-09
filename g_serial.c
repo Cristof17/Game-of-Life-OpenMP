@@ -19,31 +19,29 @@ char **matrix;
 int **bools;
 int **bools_normal;
 int **bools_buffered;
+int **current;
+int **current_backup;
 
-void extend_with_margins(int L, int C, int **begin, int ***end){
+void extend_with_margins(int L, int C, int **begin, int **end){
 
-	(*end) =(int **)malloc((L + 2) * sizeof(int *));
-	for (int i = 0; i < L + 2; ++i){
-		(*end)[i] = (int *)malloc((C + 2) * sizeof(int));
-	}
 	for (int i = 0; i < L; ++i){
-		(*end)[i + 1][0] = begin[i][C - 1];
-		(*end)[i + 1][C - 1 + 1] = begin[i][0];
+		end[i + 1][0] = begin[i][C - 1];
+		end[i + 1][C - 1 + 1] = begin[i][0];
 	}
 
 	for (int i = 0; i < C; ++i){
-		(*end)[0][i + 1] = begin[0][i];
-		(*end)[L - 1 + 1][0] = begin[0][i];
+		end[0][i + 1] = begin[0][i];
+		end[L - 1 + 1][0] = begin[0][i];
 	}
 
-	(*end)[0][0] = begin[L-1][C-1];
-	(*end)[L- 1 + 1][0] = begin[0][C-1];
-	(*end)[L - 1 + 1][C -1 + 1] = begin[0][0];
-	(*end)[0][C - 1 + 1] = begin[L-1][C-1];
+	end[0][0] = begin[L-1][C-1];
+	end[L- 1 + 1][0] = begin[0][C-1];
+	end[L - 1 + 1][C -1 + 1] = begin[0][0];
+	end[0][C - 1 + 1] = begin[L-1][C-1];
 
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
-			(*end)[i+1][j+1] = begin[i][j];
+			end[i+1][j+1] = begin[i][j];
 		}
 	}
 
@@ -68,7 +66,6 @@ void simulate_matrix(int L,int C,int **start,int **end){
 	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
 		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
 			//count alive and dead neighbors
-			/*
 			(start[i - 1][j - 1] == ALIVE) ? alive++ : dead++;
 			(start[i - 1][j + 0] == ALIVE) ? alive++ : dead++;
 			(start[i - 1][j + 1] == ALIVE) ? alive++ : dead++;
@@ -77,14 +74,6 @@ void simulate_matrix(int L,int C,int **start,int **end){
 			(start[i + 1][j - 1] == ALIVE) ? alive++ : dead++;
 			(start[i + 1][j + 0] == ALIVE) ? alive++ : dead++;
 			(start[i + 1][j + 1] == ALIVE) ? alive++ : dead++;
-			*/
-
-			for (int k = -1; k <= 1; ++k)
-				for (int l = -1; l <= 1; ++l)
-					if (k == 0 && l == 0)
-						continue;
-					else
-						(start[i + k][j + l] == DEAD) ? dead++ : alive++;
 
 			//check the values and put them in the buffered matrix
 			if (alive < 2)
@@ -146,6 +135,14 @@ void reset_matrix(int L, int C, int **matrix){
 	}
 }
 
+void shrink_without_margins(int L, int C, int** start, int **end){
+	for (int i = 1; i < L -1; ++i)
+		for (int j = 1; j < C - 1; ++j)
+			end[i-1][j-1] = start[i][j];
+}
+
+
+
 int main(int argc, char **argv){
 	
 	clock_t begin = clock();
@@ -175,6 +172,11 @@ int main(int argc, char **argv){
 		bools[i] = (int *)malloc(C * sizeof(int));
 	}
 
+	bools_normal = (int **) malloc (L * sizeof(int *));
+	for (int i = 0; i < L; ++i){
+		bools[i] = (int *)malloc(C * sizeof(int));
+	}
+
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			fscanf(f_in, "%c ", &matrix[i][j]);
@@ -182,17 +184,29 @@ int main(int argc, char **argv){
 	}
 
 	transform_in_bool(L, C, matrix, bools);
-	extend_with_margins(L, C, bools, &bools_normal); 
 	//from here we will only work with bools_normal and bools_buffered
 	alloc_buffer_matrix(L + 2, C + 2, &bools_buffered);
+	current = bools_normal;
+	//current_backup = bools_backup;
+
 	
-	for (int i = 0; i < N; ++i){
-		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
-		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
-		reset_matrix(L + 2, C + 2, bools_buffered);
+	for (int i = 0; i < N ; ++i){
+		if (i % 2 == 0)
+			current = bools_normal;
+		else
+			current = bools_buffered;
+		extend_with_margins(L, C, bools, current); 
+		if (i % 2 == 0)
+			simulate_matrix(L + 2, C + 2, current, bools_buffered);
+		else 
+			simulate_matrix(L + 2, C + 2, current, bools_normal);
+
+		//copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
+		reset_matrix(L, C, bools);
+		shrink_without_margins(L + 2, C + 2, current, bools);
 	}
 
-	save_to_file(f_out, L + 2, C + 2, bools_normal);
+	save_to_file(f_out, L + 2, C + 2, current);
 	fclose(f_in);
 	fclose(f_out);
 	
