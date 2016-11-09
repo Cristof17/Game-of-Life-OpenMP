@@ -1,4 +1,4 @@
-test = 1
+test = 4
 test_file = test/out$(test)_100iterations.txt
 infile = input/in$(test).txt
 outfile_serial = out/out$(test).txt

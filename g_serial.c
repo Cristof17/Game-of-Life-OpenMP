@@ -68,20 +68,20 @@ void simulate_matrix(int L,int C,int **start,int **end){
 	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
 		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
 			//count alive and dead neighbors
-			(start[i -1][j + (-1)] == 0) ? dead++ : alive++;
-			(start[i -1][j + 0] == 0) ? dead++ : alive++;
-			(start[i -1][j + 1] == 0) ? dead++ : alive++;
-			(start[i + 0][j + (-1)] == 0) ? dead++ : alive++;
-			(start[i + 0][j + 1] == 0) ? dead++ : alive++;
-			(start[i + 1][j + (-1)] == 0) ? dead++ : alive++;
-			(start[i + 1][j + 0] == 0) ? dead++ : alive++;
-			(start[i + 1][j + 1] == 0) ? dead++ : alive++;
+			(start[i - 1][j - 1] == ALIVE) ? alive++ : dead++;
+			(start[i - 1][j + 0] == ALIVE) ? alive++ : dead++;
+			(start[i - 1][j + 1] == ALIVE) ? alive++ : dead++;
+			(start[i + 0][j - 1] == ALIVE) ? alive++ : dead++;
+			(start[i + 0][j + 1] == ALIVE) ? alive++ : dead++;
+			(start[i + 1][j - 1] == ALIVE) ? alive++ : dead++;
+			(start[i + 1][j + 0] == ALIVE) ? alive++ : dead++;
+			(start[i + 1][j + 1] == ALIVE) ? alive++ : dead++;
 
 			//check the values and put them in the buffered matrix
-			if (dead < 2)
+			if (alive < 2)
 				end[i][j] = DEAD;
-			else if (alive == 2 || alive == 3)
-				end[i][j] = start[i][j];
+			else if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
+				end[i][j] = ALIVE;
 			else if (alive > 3)
 				end[i][j] = DEAD;
 			else if (start[i][j] == DEAD && alive == 3)
