@@ -20,12 +20,12 @@ run_serial:
 run_parallel:
 	./g_omp $(infile) $(iterations) $(outfile_parallel)
 
-#TODO Remove
 debug_serial:
 	gdb -tui --args ./g_serial $(in_file) $(iterations) out.txt
 
-check serial:
+check_parallel: $(test_file) $(outfile_parallel)
+	diff $(test_file) $(outfile_parallel)
+
+check serial: $(test_file) $(outfile_serial)
 	diff $(test_file) $(outfile_serial)
 
-check_parallel:
-	diff $(test_file) $(outfile_parallel)
