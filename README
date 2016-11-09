@@ -3,19 +3,19 @@ ROTSCHING CRISTOFOR 343C1
 Implementarea temei am realizat-o în felul următor.
 -citirea argumentelor se face conform enuntului
 -deschid fișierul de intrare și îl parsez
--transform matrice de caractere în matrice de bool
--extind matricea de bool cu marginile din capătul opus unei linii sau coloane(enunțul temei)
+-transform matrice de caractere în matrice de int in care fiecare casuta poate
+DEAD || ALIVE
+-extind matricea de int cu marginile din capătul opus unei linii sau coloane(enunțul temei)
 -procesez starea fiecărei căsuțe.
 
 Procesarea fiecărei căsuțe. Pentru acest lucru iterez folosind două for loops pe matricea
-extinsă de bools, și iterez prin vecini folosind 2 indici (line_offset,col_offset) în intervalele 
+extinsă de int, și iterez prin vecini folosind 2 indici (line_offset,col_offset) în intervalele 
 ((-1,1),(-1,1)).
 Dacă pe o căsuță găsesc valoarea true, incrementez numărul de vecini ALIVE. În caz contrar 
-incrementez numărul de vecini DEAD.o
+incrementez numărul de vecini DEAD.
 
-După partea de procesare a matricei extinse de bool de N ori, extrag matricea de bool fară margini
-și apoi o scriu în fișierul de ieșire, schimbând valorile de false în "." și valorile de true în "X".
+După partea de procesare a matricei extinse de int de N ori, extrag matricea de int fară margini
+și apoi o scriu în fișierul de ieșire, schimbând valorile de DEAD în "." și valorile de ALIVE în "X".
 
 Pentru optimizarea simulării am eliminat două for loops cu (line_offset,col_offset) în range-ul de 
-valori ((-1,1),(-1,1)). Pentru optimizare am folosit în construcția "#pragma omp parallel for" 
-construcția "collapse" 
+valori ((-1,1),(-1,1)). Pentru optimizare am folosit în construcția "#pragma omp parallel for".  
