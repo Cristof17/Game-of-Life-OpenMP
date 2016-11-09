@@ -68,6 +68,7 @@ void simulate_matrix(int L,int C,int **start,int **end){
 	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
 		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
 			//count alive and dead neighbors
+			/*
 			(start[i - 1][j - 1] == ALIVE) ? alive++ : dead++;
 			(start[i - 1][j + 0] == ALIVE) ? alive++ : dead++;
 			(start[i - 1][j + 1] == ALIVE) ? alive++ : dead++;
@@ -76,15 +77,23 @@ void simulate_matrix(int L,int C,int **start,int **end){
 			(start[i + 1][j - 1] == ALIVE) ? alive++ : dead++;
 			(start[i + 1][j + 0] == ALIVE) ? alive++ : dead++;
 			(start[i + 1][j + 1] == ALIVE) ? alive++ : dead++;
+			*/
+
+			for (int k = -1; k <= 1; ++k)
+				for (int l = -1; l <= 1; ++l)
+					if (k == 0 && l == 0)
+						continue;
+					else
+						(start[i + k][j + l] == DEAD) ? dead++ : alive++;
 
 			//check the values and put them in the buffered matrix
 			if (alive < 2)
 				end[i][j] = DEAD;
-			if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
+			if (start[i][j] == DEAD && alive == 3)
 				end[i][j] = ALIVE;
 			if (alive > 3)
 				end[i][j] = DEAD;
-			if (start[i][j] == DEAD && alive == 3)
+			if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
 				end[i][j] = ALIVE;
 			alive = 0;
 			dead = 0;
@@ -180,7 +189,7 @@ int main(int argc, char **argv){
 	for (int i = 0; i < N; ++i){
 		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
 		copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
-		//reset_matrix(L + 2, C + 2, bools_buffered);
+		reset_matrix(L + 2, C + 2, bools_buffered);
 	}
 
 	save_to_file(f_out, L + 2, C + 2, bools_normal);
