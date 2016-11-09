@@ -123,7 +123,7 @@ void save_to_file(FILE *file, int L, int C, int **matrix){
 }
 
 void copy_matrix(int L, int C, int **start, int **stop){
-	#pragma omp parallel for collapse(1) schedule(runtime)
+	#pragma omp parallel for schedule(runtime)
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			stop[i][j] = start[i][j];
