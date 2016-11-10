@@ -78,11 +78,11 @@ void simulate_matrix(int L,int C,int **start,int **end){
 			//check the values and put them in the buffered matrix
 			if (alive < 2)
 				end[i][j] = DEAD;
-			if (start[i][j] == DEAD && alive == 3)
+			else if (start[i][j] == DEAD && alive == 3)
 				end[i][j] = ALIVE;
-			if (alive > 3)
+			else if (alive > 3)
 				end[i][j] = DEAD;
-			if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
+			else if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
 				end[i][j] = ALIVE;
 			alive = 0;
 			dead = 0;
@@ -172,9 +172,14 @@ int main(int argc, char **argv){
 		bools[i] = (int *)malloc(C * sizeof(int));
 	}
 
-	bools_normal = (int **) malloc (L * sizeof(int *));
-	for (int i = 0; i < L; ++i){
-		bools[i] = (int *)malloc(C * sizeof(int));
+	bools_normal = (int **) malloc ((L + 2) * sizeof(int *));
+	for (int i = 0; i < L + 2; ++i){
+		bools_normal[i] = (int *)malloc((C + 2)* sizeof(int));
+	}
+
+	bools_buffered = (int **) malloc ((L + 2) * sizeof(int *));
+	for (int i = 0; i < L + 2; ++i){
+		bools_buffered[i] = (int *)malloc((C + 2) * sizeof(int));
 	}
 
 	for (int i = 0; i < L; ++i){
@@ -191,15 +196,17 @@ int main(int argc, char **argv){
 
 	
 	for (int i = 0; i < N ; ++i){
-		if (i % 2 == 0)
+		if (i % 2 == 0){
 			current = bools_normal;
-		else
+		}else{
 			current = bools_buffered;
+		}
 		extend_with_margins(L, C, bools, current); 
-		if (i % 2 == 0)
+		if (i % 2 == 0){
 			simulate_matrix(L + 2, C + 2, current, bools_buffered);
-		else 
+		}else{ 
 			simulate_matrix(L + 2, C + 2, current, bools_normal);
+		}
 
 		//copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
 		reset_matrix(L, C, bools);
