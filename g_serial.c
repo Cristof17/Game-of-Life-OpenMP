@@ -78,11 +78,11 @@ void simulate_matrix(int L,int C,int **start,int **end){
 			//check the values and put them in the buffered matrix
 			if (alive < 2)
 				end[i][j] = DEAD;
-			else if (start[i][j] == DEAD && alive == 3)
+			if (start[i][j] == DEAD && alive == 3)
 				end[i][j] = ALIVE;
-			else if (alive > 3)
+			if (alive > 3)
 				end[i][j] = DEAD;
-			else if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
+			if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
 				end[i][j] = ALIVE;
 			alive = 0;
 			dead = 0;
@@ -107,8 +107,8 @@ void alloc_buffer_matrix(int L, int C, int ***bools){
 }
 
 void save_to_file(FILE *file, int L, int C, int **matrix){
-	for (int i = 1; i < L-1; ++i){
-		for (int j = 1; j < C -1; ++j){
+	for (int i = 0; i < L; ++i){
+		for (int j = 0; j < C; ++j){
 			if (matrix[i][j] == DEAD)
 				fprintf(file, ". ");
 			else
@@ -152,8 +152,6 @@ int main(int argc, char **argv){
 		return -1;
 	}
 
-
-
 	fisier_in = argv[1];
 	N = atoi(argv[2]);
 	fisier_out = argv[3];
@@ -177,11 +175,6 @@ int main(int argc, char **argv){
 		bools_normal[i] = (int *)malloc((C + 2)* sizeof(int));
 	}
 
-	bools_buffered = (int **) malloc ((L + 2) * sizeof(int *));
-	for (int i = 0; i < L + 2; ++i){
-		bools_buffered[i] = (int *)malloc((C + 2) * sizeof(int));
-	}
-
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			fscanf(f_in, "%c ", &matrix[i][j]);
@@ -191,11 +184,12 @@ int main(int argc, char **argv){
 	transform_in_bool(L, C, matrix, bools);
 	//from here we will only work with bools_normal and bools_buffered
 	alloc_buffer_matrix(L + 2, C + 2, &bools_buffered);
-	current = bools_normal;
-	//current_backup = bools_backup;
+	printf("Bools = \n");
+	print(bools, L, C);
 
 	
 	for (int i = 0; i < N ; ++i){
+		printf("Rulez\n");
 		if (i % 2 == 0){
 			current = bools_normal;
 		}else{
@@ -204,16 +198,20 @@ int main(int argc, char **argv){
 		extend_with_margins(L, C, bools, current); 
 		if (i % 2 == 0){
 			simulate_matrix(L + 2, C + 2, current, bools_buffered);
+			reset_matrix(L, C, bools);
+			shrink_without_margins(L + 2, C + 2, bools_buffered, bools);
 		}else{ 
 			simulate_matrix(L + 2, C + 2, current, bools_normal);
+			reset_matrix(L, C, bools);
+			shrink_without_margins(L + 2, C + 2, bools_normal, bools);
 		}
 
 		//copy_matrix(L + 2, C + 2, bools_buffered, bools_normal);
-		reset_matrix(L, C, bools);
-		shrink_without_margins(L + 2, C + 2, current, bools);
 	}
+	printf("Bools = \n");
+	print(bools, L, C);
 
-	save_to_file(f_out, L + 2, C + 2, current);
+	save_to_file(f_out, L, C, bools);
 	fclose(f_in);
 	fclose(f_out);
 	
