@@ -140,7 +140,6 @@ void shrink_without_margins(int L, int C, int** start, int **end){
 
 int main(int argc, char **argv){
 	
-	clock_t begin = clock();
 
 	if (argc <= 1){
 		printf("./g_serial <initial_file> <number_of_iterations> <final_file>");
@@ -183,6 +182,8 @@ int main(int argc, char **argv){
 			}
 		}
 	}
+	
+	clock_t begin = clock();
 
 	//transform_in_bool(L, C, matrix, bools);
 	//from here we will only work with bools_normal and bools_buffered
@@ -197,14 +198,15 @@ int main(int argc, char **argv){
 		shrink_without_margins(L + 2, C + 2, bools_buffered, bools);
 	}
 
+	clock_t end = clock();
+	double time_spent = (double)(end - begin)/CLOCKS_PER_SEC;
+	printf("Executed in %lf\n", time_spent);
+
 	save_to_file(f_out, L, C, bools);
 	fclose(f_in);
 	fclose(f_out);
 	
 	
-	clock_t end = clock();
-	double time_spent = (double)(end - begin)/CLOCKS_PER_SEC;
-	printf("Executed in %lf\n", time_spent);
 	
 	return 0;
 }
