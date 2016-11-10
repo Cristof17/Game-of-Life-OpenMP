@@ -20,7 +20,7 @@ int **bools;
 int **bools_normal;
 int **bools_buffered;
 int **current;
-int **current_backup;
+int **current_buffered;
 
 void extend_with_margins(int L, int C, int **begin, int **end){
 
@@ -78,11 +78,11 @@ void simulate_matrix(int L,int C,int **start,int **end){
 			//check the values and put them in the buffered matrix
 			if (alive < 2)
 				end[i][j] = DEAD;
-			else if (start[i][j] == DEAD && alive == 3)
+			if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
 				end[i][j] = ALIVE;
-			else if (alive > 3)
+			if (alive > 3)
 				end[i][j] = DEAD;
-			else if (start[i][j] == ALIVE && (alive == 2 || alive == 3))
+			if (start[i][j] == DEAD && alive == 3)
 				end[i][j] = ALIVE;
 			alive = 0;
 			dead = 0;
@@ -184,9 +184,9 @@ int main(int argc, char **argv){
 	transform_in_bool(L, C, matrix, bools);
 	//from here we will only work with bools_normal and bools_buffered
 	alloc_buffer_matrix(L + 2, C + 2, &bools_buffered);
+	reset_matrix(L + 2, C + 2, bools_normal);
 	reset_matrix(L + 2, C + 2, bools_buffered);
 
-	int **current_buffered;
 	
 	for (int i = 0; i < N ; ++i){
 		if (i % 2 == 0){
@@ -197,14 +197,16 @@ int main(int argc, char **argv){
 			current_buffered = bools_normal;
 		}
 		extend_with_margins(L, C, bools, current); 
+		//DEBUG
 		simulate_matrix(L + 2, C + 2, current, current_buffered);
+		//DEBUG
 		reset_matrix(L, C, bools);
 		shrink_without_margins(L + 2, C + 2, current_buffered, bools);
 		reset_matrix(L + 2, C + 2, current);
 		reset_matrix(L + 2, C + 2, current_buffered);
 	}
 
-	save_to_file(f_out, L, C, bools);
+//	save_to_file(f_out, L, C, bools);
 	fclose(f_in);
 	fclose(f_out);
 	
