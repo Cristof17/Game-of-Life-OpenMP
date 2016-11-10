@@ -63,6 +63,7 @@ void simulate_matrix(int L,int C,int **start,int **end){
 	int alive = 0;
 	int dead = 0;
 
+	#pragma omp parallel for reduction(+: alive, dead) schedule(runtime)
 	for (int i = 1; i < L - 1 ; ++i){ //start from (1,1) because we have added borders
 		for (int j = 1; j < C - 1; ++j){ //start from (1,1) because we have added borders
 			//count alive and dead neighbors
@@ -119,15 +120,8 @@ void save_to_file(FILE *file, int L, int C, int **matrix){
 	fflush(file);
 }
 
-void copy_matrix(int L, int C, int **start, int **stop){
-	for (int i = 0; i < L; ++i){
-		for (int j = 0; j < C; ++j){
-			stop[i][j] = start[i][j];
-		}
-	}
-}
-
 void reset_matrix(int L, int C, int **matrix){
+	#pragma omp parallel for collapse(1) schedule(runtime)
 	for (int i = 0; i < L; ++i){
 		for (int j = 0; j < C; ++j){
 			matrix[i][j] = DEAD;
@@ -136,6 +130,7 @@ void reset_matrix(int L, int C, int **matrix){
 }
 
 void shrink_without_margins(int L, int C, int** start, int **end){
+	#pragma omp parallel for collapse(1) schedule(runtime)
 	for (int i = 1; i < L -1; ++i)
 		for (int j = 1; j < C - 1; ++j)
 			end[i-1][j-1] = start[i][j];
