@@ -1,4 +1,5 @@
+
 #!/bin/bash
 make build_serial
-./g_serial input/in$1.txt 100 out/out$1.txt
-diff -y out/out$1.txt test/out$1_100iterations.txt
+./g_serial input/in$1.txt 1 out/out$1.txt
+diff out/out$1.txt test/out$1_100iterations.txt

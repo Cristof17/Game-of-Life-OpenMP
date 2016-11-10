@@ -20,7 +20,7 @@ int **bools;
 int **bools_normal;
 int **bools_buffered;
 int **current;
-int **current_backup;
+int **current_buffered;
 
 void extend_with_margins(int L, int C, int **begin, int **end){
 
@@ -160,13 +160,6 @@ int main(int argc, char **argv){
 	FILE *f_out = fopen(fisier_out, "rw+");
 	fscanf(f_in, "%d %d\n", &L, &C);	
 
-	/*
-	matrix =(char **)malloc(L * sizeof(char *));
-	for (int i = 0; i < L; ++i){
-		matrix[i] = (char *)malloc(C * sizeof(char));
-	}
-	*/
-
 	bools = (int **)malloc(L * sizeof(int *));
 	for (int i = 0; i < L; ++i){
 		bools[i] = (int *)malloc(C * sizeof(int));
@@ -206,10 +199,7 @@ int main(int argc, char **argv){
 	
 		extend_with_margins(L, C, bools, bools_normal); 
 		simulate_matrix(L + 2, C + 2, bools_normal, bools_buffered);
-		//reset_matrix(L, C, bools);
 		shrink_without_margins(L + 2, C + 2, bools_buffered, bools);
-		//reset_matrix(L + 2, C + 2, current);
-		//reset_matrix(L + 2, C + 2, current_buffered);
 	}
 
 	save_to_file(f_out, L, C, bools);
